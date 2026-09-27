@@ -1,0 +1,24 @@
+/target/
+/.local-backup/
+/data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite*
+*.log
+*.lck
+*.tmp
+*.class
+/nbproject/private/
+/nbactions-local.xml
+/.idea/
+/.vscode/
+*.iml
+/.classpath
+/.project
+/.settings/
+/.env*
+/feedback.text
+/exports/
+# Original unused artwork is kept locally; packaged assets live in src/main/resources/images.
+/images/
