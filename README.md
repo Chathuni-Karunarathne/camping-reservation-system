@@ -10,6 +10,8 @@ A Java 21 desktop application for planning camping stays and managing a small ca
 
 Both roles share consistent navigation, FlatLaf styling, accessible form labels, resizable layouts, and English/Spanish language switching. Password hashing and database work run outside Swing's event dispatch thread.
 
+The refreshed interface uses rounded cards, a forest-green sidebar with scalable navigation icons, clearer active-page styling, and larger table rows. Forms focus the first input automatically, while campsite prices and billing units appear on separate lines for easier reading at smaller window sizes.
+
 The customer interface includes campsite cards with instant search, province filters and price sorting, a step-by-step booking dialog with a separate price breakdown, and photo headers using an original project asset. Larger form controls, password reveal, Escape-to-close dialogs and helpful empty states make everyday tasks easier. Admin records remain in sortable tables.
 
 ## Stack

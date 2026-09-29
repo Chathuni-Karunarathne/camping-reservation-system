@@ -29,7 +29,7 @@ final class DashboardView extends Screen {
                     BorderLayout.NORTH);
         else {
             JPanel banner = new PhotoPanel();
-            banner.setPreferredSize(new Dimension(600, 140));
+            banner.setPreferredSize(new Dimension(600, 156));
             JLabel heading = Theme.heading(t("dashboard.hero"), 29);
             heading.setForeground(Color.WHITE);
             banner.add(heading, BorderLayout.NORTH);
@@ -87,7 +87,7 @@ final class DashboardView extends Screen {
                     }
                     body.add(metrics, BorderLayout.NORTH);
                     JPanel feature = Theme.card();
-                    feature.setPreferredSize(new Dimension(600, 340));
+                    feature.setPreferredSize(new Dimension(600, 300));
                     feature.add(
                             Theme.heading(t(admin() ? "admin.next" : "user.next"), 24),
                             BorderLayout.NORTH);
@@ -109,9 +109,8 @@ final class DashboardView extends Screen {
                                     r.campsiteName(), r.arrival(), r.departure(), r.people()
                                 });
                     JPanel itinerary = Theme.panel(new BorderLayout(0, 8));
-                    itinerary.add(
-                            new JLabel(t(next.isEmpty() ? "empty.reservations" : "upcoming")),
-                            BorderLayout.NORTH);
+                    if (!next.isEmpty())
+                        itinerary.add(new JLabel(t("upcoming")), BorderLayout.NORTH);
                     itinerary.add(
                             next.isEmpty()
                                     ? Theme.emptyState(
@@ -149,8 +148,13 @@ final class DashboardView extends Screen {
 
     private JPanel metric(String key, String value) {
         JPanel p = Theme.card();
-        p.add(new JLabel(t(key)), BorderLayout.NORTH);
-        p.add(Theme.heading(value, 26), BorderLayout.CENTER);
+        JLabel label = new JLabel(t(key));
+        label.setForeground(Theme.MUTED);
+        label.setFont(label.getFont().deriveFont(Font.BOLD, 13f));
+        p.add(label, BorderLayout.NORTH);
+        JLabel number = Theme.heading(value, 28);
+        number.setForeground(Theme.FOREST);
+        p.add(number, BorderLayout.CENTER);
         return p;
     }
 }

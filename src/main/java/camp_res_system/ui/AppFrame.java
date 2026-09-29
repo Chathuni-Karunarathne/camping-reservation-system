@@ -163,8 +163,12 @@ public final class AppFrame extends JFrame {
         JPanel root = new JPanel(new BorderLayout());
         setContentPane(root);
         JPanel top = Theme.panel(new BorderLayout());
+        top.setOpaque(true);
+        top.setBackground(Color.WHITE);
         top.setBorder(new EmptyBorder(18, 26, 18, 26));
-        JLabel brand = Theme.heading("TENTTRACK", 22);
+        JLabel brand = Theme.heading("TentTrack", 24);
+        brand.setIcon(Theme.icon("campsites"));
+        brand.setIconTextGap(12);
         brand.setForeground(Theme.FOREST);
         top.add(brand, BorderLayout.WEST);
         JPanel right = Theme.panel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
@@ -191,10 +195,10 @@ public final class AppFrame extends JFrame {
         root.add(top, BorderLayout.NORTH);
         if (app.session.current() != null) {
             JPanel nav = new JPanel();
-            nav.setBackground(Theme.FOREST);
+            nav.setBackground(Theme.NAV);
             nav.setLayout(new BoxLayout(nav, BoxLayout.Y_AXIS));
             nav.setBorder(new EmptyBorder(28, 18, 24, 18));
-            nav.setPreferredSize(new Dimension(220, 0));
+            nav.setPreferredSize(new Dimension(224, 0));
             JLabel eyebrow = new JLabel(t(admin() ? "admin.workspace" : "your.escape"));
             eyebrow.setFont(eyebrow.getFont().deriveFont(11f));
             eyebrow.setForeground(Theme.SAGE);
@@ -208,11 +212,16 @@ public final class AppFrame extends JFrame {
                             : new String[] {"dashboard", "campsites", "reservations", "feedback"}) {
                 JButton b = action(key, false, () -> showPage(key));
                 b.setHorizontalAlignment(SwingConstants.LEFT);
+                b.setIcon(Theme.icon(key));
+                b.setIconTextGap(12);
+                b.setToolTipText(t(key));
+                b.getAccessibleContext().setAccessibleDescription(
+                        key.equals(page) ? t("nav.current") : t(key));
                 b.setFont(b.getFont().deriveFont(key.equals(page) ? Font.BOLD : Font.PLAIN));
                 b.putClientProperty("JButton.buttonType", "borderless");
                 b.setAlignmentX(Component.LEFT_ALIGNMENT);
-                b.setMaximumSize(new Dimension(185, 48));
-                b.setBackground(key.equals(page) ? Theme.SAGE : Theme.FOREST);
+                b.setMaximumSize(new Dimension(188, 48));
+                b.setBackground(key.equals(page) ? Theme.SAGE : Theme.NAV);
                 b.setForeground(key.equals(page) ? Theme.INK : Color.WHITE);
                 nav.add(b);
                 nav.add(Box.createVerticalStrut(9));
@@ -228,12 +237,17 @@ public final class AppFrame extends JFrame {
                                 renderShell();
                             });
             logout.setMaximumSize(new Dimension(185, 44));
+            logout.setIcon(Theme.icon("logout"));
+            logout.setIconTextGap(12);
+            logout.setAlignmentX(Component.LEFT_ALIGNMENT);
             nav.add(logout);
             root.add(nav, BorderLayout.WEST);
         }
         content.setBorder(new EmptyBorder(22, 28, 22, 28));
         root.add(content, BorderLayout.CENTER);
         notice.setBorder(new EmptyBorder(10, 26, 12, 26));
+        notice.setOpaque(true);
+        notice.setBackground(Color.WHITE);
         root.add(notice, BorderLayout.SOUTH);
         if (app.session.current() == null) authView(false);
         else loadPage();
@@ -277,12 +291,13 @@ public final class AppFrame extends JFrame {
         g.gridy = row * 2;
         g.weightx = 1;
         g.fill = GridBagConstraints.HORIZONTAL;
-        g.insets = new Insets(8, 0, 5, 0);
+        g.insets = new Insets(6, 0, 4, 0);
         JLabel l = new JLabel(t(label));
+        l.setFont(l.getFont().deriveFont(Font.BOLD, 13f));
         l.setLabelFor(component);
         form.add(l, g);
         g.gridy++;
-        g.insets = new Insets(0, 0, 6, 0);
+        g.insets = new Insets(0, 0, 4, 0);
         form.add(component, g);
         component.getAccessibleContext().setAccessibleName(t(label));
     }
@@ -320,7 +335,9 @@ public final class AppFrame extends JFrame {
                 BorderLayout.NORTH);
         JPanel form = new ScrollContent(new BorderLayout(0, 8));
         JPanel credentials = stack();
-        form.add(credentials, BorderLayout.CENTER);
+        JPanel credentialWrapper = Theme.panel(new BorderLayout());
+        credentialWrapper.add(credentials, BorderLayout.NORTH);
+        form.add(credentialWrapper, BorderLayout.CENTER);
         JTextField name = new JTextField(22),
                 email = new JTextField(22),
                 username = new JTextField(22);
@@ -387,6 +404,7 @@ public final class AppFrame extends JFrame {
         getRootPane().setDefaultButton(submit);
         content.revalidate();
         content.repaint();
+        SwingUtilities.invokeLater(() -> (register || setup ? name : username).requestFocusInWindow());
     }
 
     JTable table(String... keys) {
@@ -409,7 +427,9 @@ public final class AppFrame extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoCreateRowSorter(true);
         table.setFillsViewportHeight(true);
-        table.setRowHeight(40);
+        table.setRowHeight(46);
+        table.setIntercellSpacing(new Dimension(0, 1));
+        table.getTableHeader().setFont(table.getFont().deriveFont(Font.BOLD, 13f));
         table.getTableHeader().setReorderingAllowed(false);
         table.setDefaultRenderer(
                 LocalDate.class,

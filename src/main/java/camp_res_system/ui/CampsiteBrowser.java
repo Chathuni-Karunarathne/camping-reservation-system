@@ -37,6 +37,8 @@ final class CampsiteBrowser extends Screen {
         province.addItem(t("allProvinces"));
         province.getAccessibleContext().setAccessibleName(t("province"));
         sort.getAccessibleContext().setAccessibleName(t("sort"));
+        province.setToolTipText(t("province"));
+        sort.setToolTipText(t("sort"));
         for (String key : new String[] {"sort.name", "sort.low", "sort.high"}) sort.addItem(t(key));
         JPanel filters = Theme.card();
         filters.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
@@ -57,6 +59,8 @@ final class CampsiteBrowser extends Screen {
                 BorderLayout.CENTER);
         top.add(filters, BorderLayout.CENTER);
         top.add(count, BorderLayout.SOUTH);
+        count.setForeground(Theme.MUTED);
+        count.setFont(count.getFont().deriveFont(Font.BOLD, 13f));
         content.add(top, BorderLayout.NORTH);
         JPanel wrapper = new ScrollContent(new BorderLayout());
         wrapper.add(listings, BorderLayout.NORTH);
@@ -156,25 +160,28 @@ final class CampsiteBrowser extends Screen {
 
     private JPanel card(Campsite site) {
         JPanel card = Theme.card();
-        card.setPreferredSize(new Dimension(350, 350));
+        card.setPreferredSize(new Dimension(350, 320));
         JPanel header = Theme.panel(new BorderLayout(12, 12));
         header.add(Theme.badge(site.province()), BorderLayout.WEST);
         JLabel id = new JLabel(site.id());
         id.setForeground(Theme.MUTED);
+        id.setIcon(Theme.icon("campsites"));
+        id.setIconTextGap(8);
         header.add(id, BorderLayout.EAST);
         card.add(header, BorderLayout.NORTH);
         JPanel detail = Theme.panel(new BorderLayout(0, 10));
         JTextArea name = Theme.paragraph(site.name());
-        name.setFont(name.getFont().deriveFont(Font.BOLD, 23f));
+        name.setFont(name.getFont().deriveFont(Font.BOLD, 21f));
         name.setForeground(Theme.FOREST);
-        name.setRows(2);
+        name.setRows(1);
+        name.setToolTipText(site.name());
         detail.add(name, BorderLayout.NORTH);
         JTextArea description =
                 Theme.paragraph(
                         site.description().isBlank()
                                 ? t("browse.defaultDescription")
                                 : site.description());
-        description.setRows(3);
+        description.setRows(2);
         JScrollPane descriptionScroll = new JScrollPane(description);
         descriptionScroll.setBorder(null);
         descriptionScroll.setOpaque(false);
@@ -182,9 +189,12 @@ final class CampsiteBrowser extends Screen {
         detail.add(descriptionScroll, BorderLayout.CENTER);
         card.add(detail, BorderLayout.CENTER);
         JPanel footer = Theme.panel(new BorderLayout(0, 10));
-        JPanel price = Theme.panel(new BorderLayout());
-        price.add(Theme.heading(m.money(site.rateCents()), 22), BorderLayout.WEST);
-        price.add(new JLabel(t("perPersonNight")), BorderLayout.EAST);
+        JPanel price = Theme.panel(new BorderLayout(0, 3));
+        price.add(Theme.heading(m.money(site.rateCents()), 24), BorderLayout.NORTH);
+        JLabel unit = new JLabel(t("perPersonNight"));
+        unit.setForeground(Theme.MUTED);
+        unit.setFont(unit.getFont().deriveFont(12f));
+        price.add(unit, BorderLayout.SOUTH);
         footer.add(price, BorderLayout.NORTH);
         JButton button = action("viewBook", true, () -> open.accept(site));
         button.getAccessibleContext().setAccessibleName(t("viewBook") + ": " + site.name());

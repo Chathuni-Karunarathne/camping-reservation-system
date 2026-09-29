@@ -8,27 +8,37 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public final class Theme {
-    public static final Color FOREST = new Color(30, 70, 53),
-            SAGE = new Color(226, 234, 222),
-            PAPER = new Color(246, 247, 242),
-            INK = new Color(33, 48, 40),
-            MUTED = new Color(96, 112, 101);
+    public static final Color FOREST = new Color(23, 83, 66),
+            SAGE = new Color(229, 241, 234),
+            PAPER = new Color(245, 247, 249),
+            INK = new Color(28, 43, 40),
+            MUTED = new Color(94, 111, 108),
+            LINE = new Color(222, 230, 227),
+            NAV = new Color(20, 47, 40);
 
     private Theme() {}
 
     public static void install() {
         FlatLightLaf.setup();
-        UIManager.put("defaultFont", new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+        UIManager.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 14));
         UIManager.put("Panel.background", PAPER);
         UIManager.put("Label.foreground", INK);
-        UIManager.put("Button.arc", 18);
+        UIManager.put("Button.arc", 16);
+        UIManager.put("Button.background", Color.WHITE);
+        UIManager.put("Button.foreground", INK);
+        UIManager.put("Button.default.background", FOREST);
+        UIManager.put("Button.default.foreground", Color.WHITE);
         UIManager.put("Component.arc", 14);
         UIManager.put("TextComponent.arc", 14);
-        UIManager.put("Component.minimumHeight", 38);
+        UIManager.put("Component.minimumHeight", 42);
+        UIManager.put("Component.borderColor", LINE);
+        UIManager.put("Component.focusWidth", 2);
+        UIManager.put("Component.focusedBorderColor", FOREST);
+        UIManager.put("TextComponent.selectionBackground", SAGE);
         UIManager.put("TextField.margin", new Insets(8, 12, 8, 12));
         UIManager.put("PasswordField.margin", new Insets(8, 12, 8, 12));
         UIManager.put("PasswordField.showRevealButton", true);
-        UIManager.put("TableHeader.background", SAGE);
+        UIManager.put("TableHeader.background", new Color(239, 244, 242));
         UIManager.put("TableHeader.foreground", FOREST);
         UIManager.put("Table.alternateRowColor", new Color(248, 250, 246));
         UIManager.put("Table.cellMargins", new Insets(0, 10, 0, 10));
@@ -39,7 +49,7 @@ public final class Theme {
         UIManager.put("Table.selectionBackground", SAGE);
         UIManager.put("Table.selectionForeground", INK);
         UIManager.put("Table.showVerticalLines", false);
-        UIManager.put("TableHeader.height", 40);
+        UIManager.put("TableHeader.height", 46);
         UIManager.put("ScrollBar.width", 10);
         UIManager.put("Viewport.background", Color.WHITE);
     }
@@ -51,12 +61,21 @@ public final class Theme {
     }
 
     public static JPanel card() {
-        JPanel p = new JPanel(new BorderLayout(16, 16));
+        JPanel p = new JPanel(new BorderLayout(16, 16)) {
+            @Override
+            protected void paintComponent(Graphics graphics) {
+                Graphics2D g = (Graphics2D) graphics.create();
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setColor(getBackground());
+                g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 22, 22);
+                g.setColor(LINE);
+                g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 22, 22);
+                g.dispose();
+            }
+        };
+        p.setOpaque(false);
         p.setBackground(Color.WHITE);
-        p.setBorder(
-                BorderFactory.createCompoundBorder(
-                        new javax.swing.border.LineBorder(new Color(224, 231, 222), 1, true),
-                        new EmptyBorder(20, 20, 20, 20)));
+        p.setBorder(new EmptyBorder(22, 22, 22, 22));
         return p;
     }
 
@@ -69,12 +88,59 @@ public final class Theme {
     public static JButton button(String text, boolean primary) {
         JButton b = new JButton(text);
         b.setMargin(new Insets(10, 16, 10, 16));
+        b.setFont(b.getFont().deriveFont(Font.BOLD));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         if (primary) {
             b.setBackground(FOREST);
             b.setForeground(Color.WHITE);
         }
         return b;
+    }
+
+    /** Small scalable line icons, painted using the component's current text color. */
+    public static Icon icon(String key) {
+        return new Icon() {
+            public int getIconWidth() { return 22; }
+            public int getIconHeight() { return 22; }
+            public void paintIcon(Component c, Graphics graphics, int x, int y) {
+                Graphics2D g = (Graphics2D) graphics.create();
+                g.translate(x, y);
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setColor(c.getForeground());
+                g.setStroke(new BasicStroke(1.7f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                switch (key) {
+                    case "dashboard" -> {
+                        for (int a : new int[] {3, 13}) for (int b : new int[] {3, 13})
+                            g.drawRoundRect(a, b, 6, 6, 2, 2);
+                    }
+                    case "reservations" -> {
+                        g.drawRoundRect(3, 5, 16, 15, 3, 3);
+                        g.drawLine(3, 10, 19, 10);
+                        g.drawLine(7, 2, 7, 7); g.drawLine(15, 2, 15, 7);
+                    }
+                    case "reports" -> {
+                        g.drawLine(3, 3, 3, 19); g.drawLine(3, 19, 20, 19);
+                        g.drawLine(7, 15, 7, 11); g.drawLine(12, 15, 12, 7);
+                        g.drawLine(17, 15, 17, 3);
+                    }
+                    case "feedback" -> {
+                        g.drawRoundRect(2, 3, 18, 13, 5, 5);
+                        g.drawLine(6, 16, 6, 20); g.drawLine(6, 20, 11, 16);
+                        g.drawLine(7, 8, 15, 8); g.drawLine(7, 12, 12, 12);
+                    }
+                    case "logout" -> {
+                        g.drawLine(9, 3, 3, 3); g.drawLine(3, 3, 3, 19);
+                        g.drawLine(3, 19, 9, 19); g.drawLine(8, 11, 20, 11);
+                        g.drawLine(16, 7, 20, 11); g.drawLine(16, 15, 20, 11);
+                    }
+                    default -> {
+                        g.drawPolygon(new int[] {2, 11, 20}, new int[] {19, 3, 19}, 3);
+                        g.drawLine(11, 10, 15, 19); g.drawLine(11, 10, 7, 19);
+                    }
+                }
+                g.dispose();
+            }
+        };
     }
 
     public static JLabel badge(String text) {
@@ -88,16 +154,15 @@ public final class Theme {
     }
 
     public static JPanel emptyState(String title, String help) {
-        JPanel panel = panel(new GridBagLayout());
-        JPanel copy = panel(new BorderLayout(0, 12));
+        JPanel panel = panel(new BorderLayout(0, 10));
+        panel.setBorder(new EmptyBorder(12, 16, 12, 16));
         JLabel heading = heading(title, 21);
-        heading.setHorizontalAlignment(SwingConstants.CENTER);
-        copy.add(heading, BorderLayout.NORTH);
+        heading.setIcon(icon("campsites"));
+        heading.setIconTextGap(10);
+        panel.add(heading, BorderLayout.NORTH);
         JTextArea detail = paragraph(help);
-        detail.setColumns(34);
         detail.setRows(3);
-        copy.add(detail, BorderLayout.CENTER);
-        panel.add(copy);
+        panel.add(detail, BorderLayout.CENTER);
         return panel;
     }
 
